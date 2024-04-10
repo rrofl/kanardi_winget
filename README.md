@@ -1,0 +1,1 @@
+Oprogramowanie sluzace instalowaniu aplikacji poprzez system winget

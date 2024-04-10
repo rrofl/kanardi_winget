@@ -1,2 +1,4 @@
+Google.Chrome
 7zip.7zip
-RARLab.WinRAR
+Adobe.Acrobat.Reader.64-bit
+VideoLAN.VLC
