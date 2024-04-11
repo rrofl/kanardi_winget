@@ -1,4 +1,0 @@
-Google.Chrome
-7zip.7zip
-Adobe.Acrobat.Reader.64-bit
-VideoLAN.VLC

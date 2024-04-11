@@ -1,1 +1,1 @@
-Oprogramowanie sluzace instalowaniu aplikacji poprzez system winget
+Oprogramowanie służące m. in. instalowaniu aplikacji systemem WinGet
