@@ -1,0 +1,2 @@
+Adobe.Acrobat.Reader.64-bit
+VideoLAN.VLC

@@ -1,6 +1,9 @@
 from tkinter import *
 from customtkinter import *
 import os
+import wmi
+import csv
+
 
 deactivate_automatic_dpi_awareness()
 
@@ -11,6 +14,7 @@ aplikacje = []
 zestawy = []
 nazwy_winget = []
 wybrane_oprogramowanie = []
+c = wmi.WMI()
 
 dict_oprogramowanie = {
     'Google Chrome' : 'Google.Chrome',
@@ -76,7 +80,7 @@ def instalacja_oprogramowania():
         try:
             wybrane_oprogramowanie.remove(nazwy_winget[0])
         except:
-            print('Program Google Chrome nie zostal wybrany')
+            pass
     if var1.get() == 'on':
         if nazwy_winget[1] in wybrane_oprogramowanie:
             pass
@@ -86,7 +90,7 @@ def instalacja_oprogramowania():
         try:
             wybrane_oprogramowanie.remove(nazwy_winget[1])
         except:
-            print('Program Mozilla Firefox nie zostal wybrany')
+            pass
     if var2.get() == 'on':
         if nazwy_winget[2] in wybrane_oprogramowanie:
             pass
@@ -96,7 +100,7 @@ def instalacja_oprogramowania():
         try:
             wybrane_oprogramowanie.remove(nazwy_winget[2])
         except:
-            print('Program Opera nie zostal wybrany')
+            pass
     if var3.get() == 'on':
         if nazwy_winget[3] in wybrane_oprogramowanie:
             pass
@@ -106,7 +110,7 @@ def instalacja_oprogramowania():
         try:
             wybrane_oprogramowanie.remove(nazwy_winget[3])
         except:
-            print('Program 7 Zip nie zostal wybrany')
+            pass
     if var4.get() == 'on':
         if nazwy_winget[4] in wybrane_oprogramowanie:
             pass
@@ -116,7 +120,7 @@ def instalacja_oprogramowania():
         try:
             wybrane_oprogramowanie.remove(nazwy_winget[4])
         except:
-            print('Program WinRAR nie zostal wybrany')
+            pass
     if var5.get() == 'on':
         if nazwy_winget[5] in wybrane_oprogramowanie:
             pass
@@ -126,7 +130,7 @@ def instalacja_oprogramowania():
         try:
             wybrane_oprogramowanie.remove(nazwy_winget[5])
         except:
-            print('Program Adobe nie zostal wybrany')
+            pass
     if var6.get() == 'on':
         if nazwy_winget[6] in wybrane_oprogramowanie:
             pass
@@ -136,7 +140,7 @@ def instalacja_oprogramowania():
         try:
             wybrane_oprogramowanie.remove(nazwy_winget[6])
         except:
-            print('Program VLC nie zostal wybrany')
+            pass
     if var7.get() == 'on':
         if nazwy_winget[7] in wybrane_oprogramowanie:
             pass
@@ -146,7 +150,7 @@ def instalacja_oprogramowania():
         try:
             wybrane_oprogramowanie.remove(nazwy_winget[7])
         except:
-            print('Program Slack nie zostal wybrany')
+            pass
     if var8.get() == 'on':
         if nazwy_winget[8] in wybrane_oprogramowanie:
             pass
@@ -156,7 +160,7 @@ def instalacja_oprogramowania():
         try:
             wybrane_oprogramowanie.remove(nazwy_winget[8])
         except:
-            print('Program Zoom nie zostal wybrany')
+            pass
     if var9.get() == 'on':
         if nazwy_winget[9] in wybrane_oprogramowanie:
             pass
@@ -166,7 +170,7 @@ def instalacja_oprogramowania():
         try:
             wybrane_oprogramowanie.remove(nazwy_winget[9])
         except:
-            print('Program Skype nie zostal wybrany')
+            pass
     open(f'{current_path}/lista_programow.txt', "w").close()
     with open(f'{current_path}/lista_programow.txt', 'w') as f:
         f.truncate(16)
@@ -180,10 +184,24 @@ def instalacja_oprogramowania():
 def cleanup():
     os.system(f'{current_path}/cleanup.bat')
 
-def raport():
-    nazwa_raportu = os.system('wmic bios get serialnumber')
-    with open(f'{current_path}/{nazwa_raportu}.txt', 'w') as f:
-        f.write('tworzenie raportu')
+def raport_csv():       
+    bios = c.Win32_BIOS()[0]
+    #win32 = c.Win32_Process()[0]
+    serial_number = 'wmic bios get serialnumber'
+    nazwa_raportu = os.popen(serial_number).read().replace("\n", "").replace("  ", "").replace(" ", "").replace("SerialNumber", "")
+    string = ','.join(wybrane_oprogramowanie)
+    if nazwa_raportu == 'TobefilledbyO.E.M.':
+        nazwa_raportu = os.environ['COMPUTERNAME']
+    else:
+        pass
+    print('Raport zostal wygenerowany')
+    with open(f'{current_path}/raporty/{nazwa_raportu}.csv', 'w', newline='') as file:
+        writer = csv.writer(file, delimiter=' ')
+        writer.writerow(['Nazwa systemu', ','+nazwa_raportu])
+        writer.writerow(['Wersja BIOS', ','+bios.Version])
+        writer.writerow(['Data wydania BIOS', ','+bios.ReleaseDate])
+        writer.writerow(['Zainstalowane programy', ','+string])
+
 
 window = CTk()
 set_appearance_mode("dark")
@@ -262,7 +280,7 @@ przycisk_cleanup.place(x=width/6,y=length-80)
 
 przycisk_raport = CTkButton(window, 
                      text='Generuj \nraport!', 
-                     command=raport, 
+                     command=raport_csv, 
                      font=('Calibri Bold', 20))
 przycisk_raport.place(x=width/1.8,y=length-120)
 
