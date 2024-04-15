@@ -2,8 +2,7 @@ from tkinter import *
 from customtkinter import *
 import os
 import wmi
-import csv
-
+import subprocess
 
 deactivate_automatic_dpi_awareness()
 
@@ -27,16 +26,21 @@ dict_oprogramowanie = {
     'Slack' : 'SlackTechologies.Slack',
     'Zoom' : 'Zoom.Zoom',
     'Skype' : 'Microsoft.Skype',
+    'Framework 3.5' : '',
+    'WhatsApp' : 'WhatsApp.WhatsApp',
+    'M365 BS' : 'Microsoft.Office',
 }
 
 dict_zestawy = {
     'Standard' : ''
 }
 
+#dodaje klucze(nazwy widoczne w aplikacji) i wartosci(nazwy winget) do list z dziennika dict_oprogramowanie
 for key in dict_oprogramowanie.keys():
     aplikacje.append(key)
     nazwy_winget.append(dict_oprogramowanie[key])
 
+#dodaje klucze(nazwy widoczne w aplikacji) i wartosci(nazwy winget) do list z dziennika dict_zestawy
 for key in dict_zestawy.keys():
     zestawy.append(key)
     nazwy_winget.append(dict_zestawy[key])
@@ -70,7 +74,17 @@ def check():
     if skype.get() == 'on':
         skype.configure(window, fg_color = 'green')
 
+def zmien_nazwe():
+    input_tekst = input_zmien_nazwe.get(1.0, END+"-1c")
+    if input_tekst == "":
+        print('Puste pole nazwy PC, pomijam zmiane nazwy..')
+    elif input_tekst != "":
+        os.system(f'wmic computersystem where caption="%computername%" rename {input_tekst}')
+    else:
+        print('Blad!')
+
 def instalacja_oprogramowania():
+    #jesli checkbox jest zaznaczony dodaje nazwe z wingeta do listy wybrane_oprogramowanie, jesli nie - pass
     if var0.get() == 'on':
         if nazwy_winget[0] in wybrane_oprogramowanie:
             pass
@@ -171,15 +185,22 @@ def instalacja_oprogramowania():
             wybrane_oprogramowanie.remove(nazwy_winget[9])
         except:
             pass
+    if var10.get() == 'on':
+        os.system('DISM /Online /Enable-Feature /FeatureName:NetFx3 /All')
+    else:
+        pass
+    #otwiera plik 'lista programow.txt', usuwa wczesniejsze nazwy, wprowadza nowe i instaluje programy z pliku
     open(f'{current_path}/lista_programow.txt', "w").close()
+    # with open(f'{current_path}/lista_programow.txt', 'w') as f:
+    #     f.truncate(16)
+    #     for item in wybrane_oprogramowanie:
+    #         f.write(f'{item}\n')
+    #         print(item)
     with open(f'{current_path}/lista_programow.txt', 'w') as f:
         f.truncate(16)
         for item in wybrane_oprogramowanie:
-            f.write(f'{item}\n')
-            print(item)
-    # with open(f'{current_path}/lista_programow.txt', 'r') as f:
-    #     for line in f:
-    #         os.system(f'winget install -g {item} --accept-package-agreements --accept-source-agreements')
+            print(subprocess.run(f'winget install -e --id {item} --force --scope machine'))
+    zmien_nazwe()
 
 def cleanup():
     os.system(f'{current_path}/cleanup.bat')
@@ -194,14 +215,13 @@ def raport_csv():
         nazwa_raportu = os.environ['COMPUTERNAME']
     else:
         pass
-    print('Raport zostal wygenerowany')
     with open(f'{current_path}/raporty/{nazwa_raportu}.csv', 'w', newline='') as file:
         writer = csv.writer(file, delimiter=' ')
         writer.writerow(['Nazwa systemu', ','+nazwa_raportu])
         writer.writerow(['Wersja BIOS', ','+bios.Version])
         writer.writerow(['Data wydania BIOS', ','+bios.ReleaseDate])
         writer.writerow(['Zainstalowane programy', ','+string])
-
+    print('Raport zostal wygenerowany')
 
 window = CTk()
 set_appearance_mode("dark")
@@ -219,6 +239,9 @@ var6 = StringVar(value='off')
 var7 = StringVar(value='off')
 var8 = StringVar(value='off')
 var9 = StringVar(value='off')
+var10 = StringVar(value='off')
+var11 = StringVar(value='off')
+var12 = StringVar(value='off')
 var01 = StringVar(value='off')
 
 #OPROGRAMOWANIE
@@ -252,39 +275,73 @@ zoom.place(x=width/1.35, y=200)
 skype = CTkCheckBox(window, text=aplikacje[9], variable=var9, command=check, onvalue='on', offvalue='off', font=('Calibri Bold', 14), corner_radius=50)
 skype.place(x=width/1.35, y=150)
 
+framework_35 = CTkCheckBox(window, text=aplikacje[10], variable=var10, command=check, onvalue='on', offvalue='off', font=('Calibri Bold', 14), corner_radius=50)
+framework_35.place(x=width/13, y=300)
+
+whatsapp = CTkCheckBox(window, text=aplikacje[11], variable=var11, command=check, onvalue='on', offvalue='off', font=('Calibri Bold', 14), corner_radius=50)
+whatsapp.place(x=width/2.4, y=250)
+
+m365_bs = CTkCheckBox(window, text=aplikacje[12], variable=var12, command=check, onvalue='on', offvalue='off', font=('Calibri Bold', 14), corner_radius=50)
+m365_bs.place(x=width/1.35, y=250)
+
 #ZESTAWY
 standard = CTkCheckBox(window, text=zestawy[0], variable=var01, command=standard, onvalue='on', offvalue='off', font=('Calibri Bold', 14), corner_radius=50)
-standard.place(x=width/13, y=350)
+standard.place(x=width/13, y=390)
 
-programy = CTkLabel(window, 
+napis_programy = CTkLabel(window, 
                     text=f'Wybierz oprogramowanie \ndo instalacji: ', 
                     font=('Calibri Bold', 30))
-programy.place(x=width/5.5, y=length/100)
+napis_programy.place(x=width/5.5, y=length/100)
 
-zestawy_napis = CTkLabel(window, 
+napis_zestawy = CTkLabel(window, 
                     text='Zestawy', 
                     font=('Calibri Bold', 30))
-zestawy_napis.place(x=width/2.4, y=300)
+napis_zestawy.place(x=width/2.4, y=340)
+
+
+napis_zmien_nazwe = CTkLabel(window, 
+                        text='Zmien nazwę\nkomputera ↓',
+                        text_color = 'yellow',
+                        font=('Calibri Bold', 14))
+napis_zmien_nazwe.place(x=width/10,y=440)
+
+input_zmien_nazwe = CTkTextbox(window,
+                        fg_color = 'yellow',
+                        width = 150,
+                        height = 20,
+                        text_color = 'black',
+                        border_spacing = 0,
+                        activate_scrollbars = False,
+                        wrap = 'none',
+                        font=('Calibri Bold', 12))
+input_zmien_nazwe.place(x=width/30,y=480)
+
+napis_zostaw_nazwe = CTkLabel(window, 
+                        text='(zostaw puste pole jesli\n nie chcesz zmieniac nazwy)',
+                        text_color = 'grey',
+                        font=('Calibri Bold', 10))
+napis_zostaw_nazwe.place(x=width/14,y=513)
 
 przycisk_zainstaluj = CTkButton(window, 
-                     text='Zainstaluj!', 
+                     text='Zainstaluj', 
                      command=instalacja_oprogramowania, 
                      font=('Calibri Bold', 20))
-przycisk_zainstaluj.place(x=width/6,y=length-140)
+przycisk_zainstaluj.place(x=width/2.75,y=450)
 
 przycisk_cleanup = CTkButton(window, 
-                     text='Cleanup!', 
+                     text='Cleanup', 
                      command=cleanup, 
                      font=('Calibri Bold', 20))
-przycisk_cleanup.place(x=width/6,y=length-80)
+przycisk_cleanup.place(x=width/2.75,y=490)
+
 
 przycisk_raport = CTkButton(window, 
                      text='Generuj \nraport!', 
                      command=raport_csv, 
                      font=('Calibri Bold', 20))
-przycisk_raport.place(x=width/1.8,y=length-120)
+przycisk_raport.place(x=width/1.45,y=length-95)
 
-ja = CTkLabel(window, text='by Artur Drab', font=('Calibri', 12)).place(x=width/1.18, y=length/1.06)
+ja = CTkLabel(window, text='by Artur Drab', font=('Calibri', 12)).place(x=width/1.18, y=length/1.05)
 
 window.resizable(0,0)
 window.mainloop()
