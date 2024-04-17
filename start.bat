@@ -39,4 +39,4 @@ if %errorlevel% neq 0 (
 
 echo Installation completed.
 
-C:\Users\rrofl\AppData\Local\Programs\Python\Python311 D:\Projects\Kanardi\choco_ctk.py %*
+C:\Users\rrofl\AppData\Local\Programs\Python\Python311\python.exe %~d0\Projects\Kanardi\choco_ctk.py

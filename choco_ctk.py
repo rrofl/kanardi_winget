@@ -3,6 +3,7 @@ from customtkinter import *
 import os
 import wmi
 import subprocess
+import csv
 
 deactivate_automatic_dpi_awareness()
 
@@ -17,7 +18,7 @@ c = wmi.WMI()
 
 dict_oprogramowanie = {
     'Google Chrome' : 'Google.Chrome',
-    'Mozilla Firefox' : 'Mozilla.Firefox',
+    'Mozilla Firefox' : '',
     'Opera' : 'Opera.Opera',
     '7 Zip' : '7zip.7zip',
     'WinRAR' : 'RARLab.WinRAR',
@@ -55,31 +56,64 @@ def standard():
 def check():
     if chrome.get() == 'on':
         chrome.configure(window, fg_color = 'green')
+    else:
+        pass
     if mozilla.get() == 'on':
         mozilla.configure(window, fg_color = 'green')
+    else:
+        pass
     if opera.get() == 'on':
         opera.configure(window, fg_color = 'green')
+    else:
+        pass
     if sevenzip.get() == 'on':
         sevenzip.configure(window, fg_color = 'green')
+    else:
+        pass
     if winrar.get() == 'on':
         winrar.configure(window, fg_color = 'green')
-    if adobe.get() == 'on':
-        adobe.configure(window, fg_color = 'green')
-    if vlc.get() == 'on':
-        vlc.configure(window, fg_color = 'green')
-    if slack.get() == 'on':
-        slack.configure(window, fg_color = 'green')
-    if zoom.get() == 'on':
-        zoom.configure(window, fg_color = 'green')
+    else:
+        pass
     if skype.get() == 'on':
         skype.configure(window, fg_color = 'green')
+    else:
+        pass
+    if vlc.get() == 'on':
+        vlc.configure(window, fg_color = 'green')
+    else:
+        pass
+    if slack.get() == 'on':
+        slack.configure(window, fg_color = 'green')
+    else:
+        pass
+    if zoom.get() == 'on':
+        zoom.configure(window, fg_color = 'green')
+    else:
+        pass
+    if adobe.get() == 'on':
+        adobe.configure(window, fg_color = 'green')
+    else:
+        pass
+    if whatsapp.get() == 'on':
+        whatsapp.configure(window, fg_color = 'green')
+    else:
+        pass
+    if m365_bs.get() == 'on':
+        m365_bs.configure(window, fg_color = 'green')
+    else:
+        pass
+    if framework_35.get() == 'on':
+        framework_35.configure(window, fg_color = 'green')
+    else:
+        pass
 
 def zmien_nazwe():
     input_tekst = input_zmien_nazwe.get(1.0, END+"-1c")
-    if input_tekst == "":
+    if input_tekst == '':
         print('Puste pole nazwy PC, pomijam zmiane nazwy..')
-    elif input_tekst != "":
-        os.system(f'wmic computersystem where caption="%computername%" rename {input_tekst}')
+    elif input_tekst != '':
+        os.system(f'wmic computersystem where caption="%computername%" rename "{input_tekst}"')
+        print(input_tekst)
     else:
         print('Blad!')
 
@@ -96,15 +130,9 @@ def instalacja_oprogramowania():
         except:
             pass
     if var1.get() == 'on':
-        if nazwy_winget[1] in wybrane_oprogramowanie:
-            pass
-        else:
-            wybrane_oprogramowanie.append(nazwy_winget[1])
+        os.system('start Mozilla.exe')
     else:
-        try:
-            wybrane_oprogramowanie.remove(nazwy_winget[1])
-        except:
-            pass
+        pass
     if var2.get() == 'on':
         if nazwy_winget[2] in wybrane_oprogramowanie:
             pass
@@ -199,7 +227,7 @@ def instalacja_oprogramowania():
     with open(f'{current_path}/lista_programow.txt', 'w') as f:
         f.truncate(16)
         for item in wybrane_oprogramowanie:
-            print(subprocess.run(f'winget install -e --id {item} --force --scope machine'))
+            print(subprocess.run(f'winget install -e --id {item} --force --accept-package-agreements --accept-source-agreements --scope machine'))
     zmien_nazwe()
 
 def cleanup():
@@ -245,7 +273,7 @@ var12 = StringVar(value='off')
 var01 = StringVar(value='off')
 
 #OPROGRAMOWANIE
-chrome = CTkCheckBox(window, text=aplikacje[0], variable=var0, command=check, onvalue='on', offvalue='off', font=('Calibri Bold', 14), corner_radius=50)
+chrome = CTkCheckBox(window, text=aplikacje[0], variable=var0, command=check, onvalue='on', offvalue='off', font=('Calibri Bold', 14), corner_radius=50, fg_color = 'black')
 chrome.place(x=width/13, y=100)
 
 mozilla = CTkCheckBox(window, text=aplikacje[1], variable=var1, command=check, onvalue='on', offvalue='off', font=('Calibri Bold', 14), corner_radius=50)
@@ -296,8 +324,7 @@ napis_programy.place(x=width/5.5, y=length/100)
 napis_zestawy = CTkLabel(window, 
                     text='Zestawy', 
                     font=('Calibri Bold', 30))
-napis_zestawy.place(x=width/2.4, y=340)
-
+napis_zestawy.place(x=width/2.45, y=340)
 
 napis_zmien_nazwe = CTkLabel(window, 
                         text='Zmien nazwę\nkomputera ↓',
@@ -333,7 +360,6 @@ przycisk_cleanup = CTkButton(window,
                      command=cleanup, 
                      font=('Calibri Bold', 20))
 przycisk_cleanup.place(x=width/2.75,y=490)
-
 
 przycisk_raport = CTkButton(window, 
                      text='Generuj \nraport!', 

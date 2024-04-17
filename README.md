@@ -1,1 +1,4 @@
-Oprogramowanie służące m. in. instalowaniu aplikacji systemem WinGet
+Instalowanie programow przy uzyciu WinGet
+Zmiana nazwy PC
+Usuniecie historii przegladarki Chrome
+Usuniecie plikow i folderow z "Pobrane" i "Dokumenty"
